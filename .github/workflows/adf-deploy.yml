@@ -1,0 +1,107 @@
+name: Deploy ADF Resources
+
+on:
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      artifact-name: ${{ steps.upload.outputs.artifact-name }}
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '14.x'
+
+      - name: Install ADF Utilities
+        run: npm install
+        working-directory: ./ADFroot/build
+
+      - name: Validate ADF Resources
+        run: npm run build validate ./ADFroot/ /subscriptions/${{ secrets.AZURE_SUBSCRIPTION_ID }}/resourceGroups/<DevResourceGroup>/providers/Microsoft.DataFactory/factories/<DevADFName>
+        working-directory: ./ADFroot/build
+
+      - name: Export ARM Template
+        run: npm run build export ./ADFroot/ /subscriptions/${{ secrets.AZURE_SUBSCRIPTION_ID }}/resourceGroups/<DevResourceGroup>/providers/Microsoft.DataFactory/factories/<DevADFName> ExportedArmTemplate
+        working-directory: ./ADFroot/build
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: ExportedArmTemplate
+          path: ./ADFroot/build/ExportedArmTemplate
+
+  deploy-qa:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: QA
+      url: https://portal.azure.com/
+    steps:
+      - name: Wait for QA Approval
+        uses: hmarr/auto-approve-action@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Download Artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: ExportedArmTemplate
+
+      - name: Login to Azure
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID_QA }}
+          client-secret: ${{ secrets.AZURE_CLIENT_SECRET_QA }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          enable-AzPSSession: true
+
+      - name: Deploy to QA
+        uses: Azure/data-factory-deploy-action@v1.2.0
+        with:
+          resourceGroupName: rg-ramz-qa
+          dataFactoryName: adf-ramz-qa
+          armTemplateFile: ExportedArmTemplate/ARMTemplateForFactory.json
+          armTemplateParametersFile: ExportedArmTemplate/ARMTemplateParameters_QA.json
+
+  deploy-prod:
+    needs: deploy-qa
+    runs-on: ubuntu-latest
+    environment:
+      name: Prod
+      url: https://portal.azure.com/
+    steps:
+      - name: Wait for Prod Approval
+        uses: hmarr/auto-approve-action@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Download Artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: ExportedArmTemplate
+
+      - name: Login to Azure
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_PRD }}
+          client-secret: ${{ secrets.AZURE_CLIENT_SECRET_PRD }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          enable-AzPSSession: true
+
+      - name: Deploy to Prod
+        uses: Azure/data-factory-deploy-action@v1.2.0
+        with:
+          resourceGroupName: rg-ramz-prd
+          dataFactoryName: adf-ramz-prd
+          armTemplateFile: ExportedArmTemplate/ARMTemplateForFactory.json
+          armTemplateParametersFile: ExportedArmTemplate/ARMTemplateParameters_Prod.json
