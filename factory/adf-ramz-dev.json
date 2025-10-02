@@ -1,0 +1,9 @@
+{
+	"name": "adf-ramz-dev",
+	"location": "centralus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "8c5c7924-96af-4cf1-8c00-a1d704d8ff14",
+		"tenantId": "c3ba558f-29a9-42b5-8bc8-78535fca8188"
+	}
+}
