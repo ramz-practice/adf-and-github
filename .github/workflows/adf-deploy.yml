@@ -93,7 +93,7 @@ jobs:
             -ResourceGroupName "${{ secrets.AZURE_RESOURCE_GROUP_QA }}" `
             -DataFactoryName "${{ secrets.AZURE_DATA_FACTORY_QA }}" `
             -predeployment $false `
-            -deleteDeployment $false
+            -deleteDeployment $true
         shell: pwsh
 
   deploy-prod:
@@ -152,5 +152,5 @@ jobs:
             -ResourceGroupName "${{ secrets.AZURE_RESOURCE_GROUP_PRD }}" `
             -DataFactoryName "${{ secrets.AZURE_DATA_FACTORY_PRD }}" `
             -predeployment $false `
-            -deleteDeployment $false
+            -deleteDeployment $true
         shell: pwsh
