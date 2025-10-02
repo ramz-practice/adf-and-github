@@ -51,7 +51,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Install Az PowerShell module
-        run: Install-Module -Name Az -Scope CurrentUser -Repository PSGallery -Force
+        run: Install-Module -Name Az.DataFactory -Scope CurrentUser -Repository PSGallery -Force
         shell: pwsh
 
       - name: Run Pre-deployment script
@@ -110,7 +110,7 @@ jobs:
 
       # Pre-deployment task
       - name: Install Az PowerShell module
-        run: Install-Module -Name Az -Scope CurrentUser -Repository PSGallery -Force
+        run: Install-Module -Name Az.DataFactory -Scope CurrentUser -Repository PSGallery -Force
         shell: pwsh
 
       - name: Run Pre-deployment script
