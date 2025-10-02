@@ -16,27 +16,27 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v3.4.1
         with:
-          node-version: '14.x'
+          node-version: '18.x'
 
       - name: Install ADF Utilities
         run: npm install
-        working-directory: ./ADFroot/build
+        working-directory: ${{github.workspace}}/build
 
       - name: Validate ADF Resources
-        run: npm run build validate ./ADFroot/ /subscriptions/${{ secrets.AZURE_SUBSCRIPTION_ID }}/resourceGroups/<DevResourceGroup>/providers/Microsoft.DataFactory/factories/<DevADFName>
-        working-directory: ./ADFroot/build
+        run: npm run build validate ${{github.workspace}} /subscriptions/${{ secrets.AZURE_SUBSCRIPTION_ID_DEV }}/resourceGroups/${{ secrets.AZURE_RESOURCE_GROUP_DEV }}/providers/Microsoft.DataFactory/factories/${{ secrets.AZURE_DATA_FACTORY_DEV }}
+        working-directory: ${{github.workspace}}/build
 
       - name: Export ARM Template
-        run: npm run build export ./ADFroot/ /subscriptions/${{ secrets.AZURE_SUBSCRIPTION_ID }}/resourceGroups/<DevResourceGroup>/providers/Microsoft.DataFactory/factories/<DevADFName> ExportedArmTemplate
-        working-directory: ./ADFroot/build
+        run: npm run build export ${{github.workspace}} /subscriptions/${{ secrets.AZURE_SUBSCRIPTION_ID_DEV }}/resourceGroups/${{ secrets.AZURE_RESOURCE_GROUP_DEV }}/providers/Microsoft.DataFactory/factories/${{ secrets.AZURE_DATA_FACTORY_DEV }} ExportedArmTemplate
+        working-directory: ${{github.workspace}}/build
 
       - name: Upload Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ExportedArmTemplate
-          path: ./ADFroot/build/ExportedArmTemplate
+          path: ${{github.workspace}}/build/ExportedArmTemplate
 
   deploy-qa:
     needs: build
@@ -50,8 +50,22 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Install Az PowerShell module
+        run: ${{ Install-Module -Name Az -Scope CurrentUser -Repository PSGallery -Force }}
+        shell: pwsh
+
+      - name: Run Pre-deployment script
+        run: |
+          ${{ github.action_path }}/PrePostDeploymentScript.ps1 `
+            -armTemplate "ExportedArmTemplate/ARMTemplateForFactory.json" `
+            -ResourceGroupName "${{ secrets.AZURE_RESOURCE_GROUP_QA }}" `
+            -DataFactoryName "${{ secrets.AZURE_DATA_FACTORY_QA }}" `
+            -predeployment $true `
+            -deleteDeployment $false
+        shell: pwsh
+
       - name: Download Artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: ExportedArmTemplate
 
@@ -60,17 +74,27 @@ jobs:
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID_QA }}
           client-secret: ${{ secrets.AZURE_CLIENT_SECRET_QA }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID_QA }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}          
           enable-AzPSSession: true
 
       - name: Deploy to QA
         uses: Azure/data-factory-deploy-action@v1.2.0
         with:
-          resourceGroupName: rg-ramz-qa
-          dataFactoryName: adf-ramz-qa
+          resourceGroupName: ${{ secrets.AZURE_RESOURCE_GROUP_QA }}
+          dataFactoryName: ${{ secrets.AZURE_DATA_FACTORY_QA }}
           armTemplateFile: ExportedArmTemplate/ARMTemplateForFactory.json
           armTemplateParametersFile: ExportedArmTemplate/ARMTemplateParameters_QA.json
+
+      - name: Run Post-deployment script
+        run: |
+          ${{ github.action_path }}/PrePostDeploymentScript.ps1 `
+            -armTemplate "ExportedArmTemplate/ARMTemplateForFactory.json" `
+            -ResourceGroupName "${{ secrets.AZURE_RESOURCE_GROUP_QA }}" `
+            -DataFactoryName "${{ secrets.AZURE_DATA_FACTORY_QA }}" `
+            -predeployment $false `
+            -deleteDeployment $false
+        shell: pwsh
 
   deploy-prod:
     needs: deploy-qa
@@ -84,8 +108,23 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
+      # Pre-deployment task
+      - name: Install Az PowerShell module
+        run: ${{ Install-Module -Name Az -Scope CurrentUser -Repository PSGallery -Force }}
+        shell: pwsh
+
+      - name: Run Pre-deployment script
+        run: |
+          ${{ github.action_path }}/PrePostDeploymentScript.ps1 `
+            -armTemplate "ExportedArmTemplate/ARMTemplateForFactory.json" `
+            -ResourceGroupName "${{ secrets.AZURE_RESOURCE_GROUP_PRD }}" `
+            -DataFactoryName "${{ secrets.AZURE_DATA_FACTORY_PRD }}" `
+            -predeployment $true `
+            -deleteDeployment $false
+        shell: pwsh
+        
       - name: Download Artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: ExportedArmTemplate
 
@@ -94,14 +133,24 @@ jobs:
         with:
           client-id: ${{ secrets.AZURE_CLIENT_PRD }}
           client-secret: ${{ secrets.AZURE_CLIENT_SECRET_PRD }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID_PRD }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           enable-AzPSSession: true
 
       - name: Deploy to Prod
         uses: Azure/data-factory-deploy-action@v1.2.0
         with:
-          resourceGroupName: rg-ramz-prd
-          dataFactoryName: adf-ramz-prd
+          resourceGroupName: ${{ secrets.AZURE_RESOURCE_GROUP_PRD }}
+          dataFactoryName: ${{ secrets.AZURE_DATA_FACTORY_PRD }}
           armTemplateFile: ExportedArmTemplate/ARMTemplateForFactory.json
           armTemplateParametersFile: ExportedArmTemplate/ARMTemplateParameters_Prod.json
+      
+      - name: Run Post-deployment script
+        run: |
+          ${{ github.action_path }}/PrePostDeploymentScript.ps1 `
+            -armTemplate "ExportedArmTemplate/ARMTemplateForFactory.json" `
+            -ResourceGroupName "${{ secrets.AZURE_RESOURCE_GROUP_PRD }}" `
+            -DataFactoryName "${{ secrets.AZURE_DATA_FACTORY_PRD }}" `
+            -predeployment $false `
+            -deleteDeployment $false
+        shell: pwsh
