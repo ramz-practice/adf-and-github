@@ -6,19 +6,21 @@ on:
 permissions:
   id-token: write
   contents: read
-
-env:
-  SOURCE_ADF: ${{ vars.AZURE_DATA_FACTORY }}
-
+  
 jobs:       
   deploy-qa:
     runs-on: ubuntu-latest
+    
     environment:
       name: QA
       url: https://portal.azure.com/
+    
+    env:
+      SOURCE_ADF: ${{ vars.AZURE_DATA_FACTORY_DEV }}
+  
     steps:
       - name: Using ARM Template from source ADF instance
-        run: echo "Source ADF instance is ${{ env.SOURCE_ADF }}"
+        run: echo "Source ADF instance is $SOURCE_ADF"
   
       - name: Checkout adf_publish branch
         uses: actions/checkout@v3
@@ -75,9 +77,14 @@ jobs:
   deploy-prod:
     needs: deploy-qa
     runs-on: ubuntu-latest
+    
     environment:
       name: PRD
       url: https://portal.azure.com/
+    
+    env:
+      SOURCE_ADF: ${{ vars.AZURE_DATA_FACTORY_DEV }}
+      
     steps:
       - name: Using ARM Template from source ADF instance
         run: echo "Source ADF instance is $SOURCE_ADF"
