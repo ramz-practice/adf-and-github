@@ -67,7 +67,7 @@ jobs:
 
       - name: Run Pre-deployment script
         run: |
-          ${{github.workspace}}/PrePostDeploymentScript.ps1 `
+          ${{github.workspace}}/PrePostDeploymentScript.Ver2.ps1 `
             -armTemplate "ExportedArmTemplate/ARMTemplateForFactory.json" `
             -ResourceGroupName "${{ secrets.AZURE_RESOURCE_GROUP }}" `
             -DataFactoryName "${{ secrets.AZURE_DATA_FACTORY }}" `
@@ -86,7 +86,7 @@ jobs:
 
       - name: Run Post-deployment script
         run: |
-          ${{github.workspace}}/PrePostDeploymentScript.ps1 `
+          ${{github.workspace}}/PrePostDeploymentScript.Ver2.ps1 `
             -armTemplate "ExportedArmTemplate/ARMTemplateForFactory.json" `
             -ResourceGroupName "${{ secrets.AZURE_RESOURCE_GROUP }}" `
             -DataFactoryName "${{ secrets.AZURE_DATA_FACTORY }}" `
@@ -123,7 +123,7 @@ jobs:
 
       - name: Run Pre-deployment script
         run: |
-          ${{github.workspace}}/PrePostDeploymentScript.ps1 `
+          ${{github.workspace}}/PrePostDeploymentScript.Ver2.ps1 `
             -armTemplate "ExportedArmTemplate/ARMTemplateForFactory.json" `
             -ResourceGroupName "${{ secrets.AZURE_RESOURCE_GROUP }}" `
             -DataFactoryName "${{ secrets.AZURE_DATA_FACTORY }}" `
@@ -142,7 +142,7 @@ jobs:
       
       - name: Run Post-deployment script
         run: |
-          ${{ github.action_path }}/PrePostDeploymentScript.ps1 `
+          ${{ github.action_path }}/PrePostDeploymentScript.Ver2.ps1 `
             -armTemplate "ExportedArmTemplate/ARMTemplateForFactory.json" `
             -ResourceGroupName "${{ secrets.AZURE_RESOURCE_GROUP }}" `
             -DataFactoryName "${{ secrets.AZURE_DATA_FACTORY }}" `
