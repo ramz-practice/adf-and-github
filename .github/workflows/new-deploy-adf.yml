@@ -44,12 +44,17 @@ jobs:
           
       - name: Run Pre-deployment script
         run: |
-          ./PrePostDeploymentScript.Ver2.ps1 `
-          -armTemplate "./$env:SOURCE_ADF/ARMTemplateForFactory.json" `
-          -ResourceGroupName "${{ vars.AZURE_RESOURCE_GROUP }}" `
-          -DataFactoryName "${{ vars.AZURE_DATA_FACTORY }}" `
-          -predeployment $true `
-          -deleteDeployment $false
+          try {
+            ./PrePostDeploymentScript.Ver2.ps1 `
+            -armTemplate "./$env:SOURCE_ADF/ARMTemplateForFactory.json" `
+            -ResourceGroupName "${{ vars.AZURE_RESOURCE_GROUP }}" `
+            -DataFactoryName "${{ vars.AZURE_DATA_FACTORY }}" `
+            -predeployment $true `
+            -deleteDeployment $false
+          } catch {
+            Write-Error "Pre-deployment script failed: $_"
+            exit 1
+          }
         shell: pwsh
 
       - name: Deploy to QA
@@ -63,17 +68,22 @@ jobs:
 
       - name: Run Post-deployment script
         run: |
-          if ($null -ne $deploymentsToConsider -and $deploymentsToConsider.Count -gt 0) {
-            $deploymentName = $deploymentsToConsider[0].DeploymentName
-            # proceed with deletion
-            ./PrePostDeploymentScript.Ver2.ps1 `
-              -armTemplate "./$env:SOURCE_ADF/ARMTemplateForFactory.json" `
-              -ResourceGroupName "${{ vars.AZURE_RESOURCE_GROUP }}" `
-              -DataFactoryName "${{ vars.AZURE_DATA_FACTORY }}" `
-              -predeployment $false `
-              -deleteDeployment $true
-          } else {
-            Write-Warning "No deployments found to delete in resource group $ResourceGroupName"
+          try {
+            if ($null -ne $deploymentsToConsider -and $deploymentsToConsider.Count -gt 0) {
+              $deploymentName = $deploymentsToConsider[0].DeploymentName
+              # proceed with deletion
+              ./PrePostDeploymentScript.Ver2.ps1 `
+                -armTemplate "./$env:SOURCE_ADF/ARMTemplateForFactory.json" `
+                -ResourceGroupName "${{ vars.AZURE_RESOURCE_GROUP }}" `
+                -DataFactoryName "${{ vars.AZURE_DATA_FACTORY }}" `
+                -predeployment $false `
+                -deleteDeployment $true
+            } else {
+              Write-Warning "No deployments found to delete in resource group $ResourceGroupName"
+            }
+          } catch {
+            Write-Error "Post-deployment script failed: $_"
+            exit 1
           }
         shell: pwsh
 
@@ -111,12 +121,17 @@ jobs:
 
       - name: Run Pre-deployment script
         run: |
-          ./PrePostDeploymentScript.Ver2.ps1 `
-          -armTemplate "./$env:SOURCE_ADF/ARMTemplateForFactory.json" `
-          -ResourceGroupName "${{ vars.AZURE_RESOURCE_GROUP }}" `
-          -DataFactoryName "${{ vars.AZURE_DATA_FACTORY }}" `
-          -predeployment $true `
-          -deleteDeployment $false
+          try {
+            ./PrePostDeploymentScript.Ver2.ps1 `
+            -armTemplate "./$env:SOURCE_ADF/ARMTemplateForFactory.json" `
+            -ResourceGroupName "${{ vars.AZURE_RESOURCE_GROUP }}" `
+            -DataFactoryName "${{ vars.AZURE_DATA_FACTORY }}" `
+            -predeployment $true `
+            -deleteDeployment $false
+          } catch {
+            Write-Error "Pre-deployment script failed: $_"
+            exit 1
+          }
         shell: pwsh
         
       - name: Deploy to Prod
@@ -130,16 +145,21 @@ jobs:
       
       - name: Run Post-deployment script
         run: |
-          if ($null -ne $deploymentsToConsider -and $deploymentsToConsider.Count -gt 0) {
-            $deploymentName = $deploymentsToConsider[0].DeploymentName
-            # proceed with deletion
-            ./PrePostDeploymentScript.Ver2.ps1 `
-              -armTemplate "./$env:SOURCE_ADF/ARMTemplateForFactory.json" `
-              -ResourceGroupName "${{ vars.AZURE_RESOURCE_GROUP }}" `
-              -DataFactoryName "${{ vars.AZURE_DATA_FACTORY }}" `
-              -predeployment $false `
-              -deleteDeployment $true
-          } else {
-            Write-Warning "No deployments found to delete in resource group $ResourceGroupName"
+          try {
+            if ($null -ne $deploymentsToConsider -and $deploymentsToConsider.Count -gt 0) {
+              $deploymentName = $deploymentsToConsider[0].DeploymentName
+              # proceed with deletion
+              ./PrePostDeploymentScript.Ver2.ps1 `
+                -armTemplate "./$env:SOURCE_ADF/ARMTemplateForFactory.json" `
+                -ResourceGroupName "${{ vars.AZURE_RESOURCE_GROUP }}" `
+                -DataFactoryName "${{ vars.AZURE_DATA_FACTORY }}" `
+                -predeployment $false `
+                -deleteDeployment $true
+            } else {
+              Write-Warning "No deployments found to delete in resource group $ResourceGroupName"
+            }
+          } catch {
+            Write-Error "Pre-deployment script failed: $_"
+            exit 1
           }
         shell: pwsh
