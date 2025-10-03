@@ -6,7 +6,10 @@ on:
 permissions:
   id-token: write
   contents: read
-  
+
+env:
+  SOURCE_ADF: ${{ vars.AZURE_DATA_FACTORY_DEV }}
+
 jobs:       
   deploy-qa:
     runs-on: ubuntu-latest
@@ -15,8 +18,8 @@ jobs:
       name: QA
       url: https://portal.azure.com/
     
-    env:
-      SOURCE_ADF: ${{ vars.AZURE_DATA_FACTORY_DEV }}
+    # env:
+    #   SOURCE_ADF: ${{ vars.AZURE_DATA_FACTORY_DEV }}
   
     steps:
       - name: Using ARM Template from source ADF instance
@@ -48,7 +51,7 @@ jobs:
       - name: Run Pre-deployment script
         run: |
           ./PrePostDeploymentScript.Ver2.ps1 `
-          -armTemplate "./$SOURCE_ADF/ARMTemplateForFactory.json" `
+          -armTemplate "./$env:SOURCE_ADF/ARMTemplateForFactory.json" `
           -ResourceGroupName "${{ vars.AZURE_RESOURCE_GROUP }}" `
           -DataFactoryName "${{ vars.AZURE_DATA_FACTORY }}" `
           -predeployment $true `
@@ -60,14 +63,14 @@ jobs:
         with:
           resourceGroupName: ${{ vars.AZURE_RESOURCE_GROUP }}
           dataFactoryName: ${{ vars.AZURE_DATA_FACTORY }}
-          armTemplateFile: ./$SOURCE_ADF/ARMTemplateForFactory.json
+          armTemplateFile: ./$env:SOURCE_ADF/ARMTemplateForFactory.json
           armTemplateParametersFile: ./ARMTemplateParameters_QA.json
           mode: incremental
 
       - name: Run Post-deployment script
         run: |
           ./PrePostDeploymentScript.Ver2.ps1 `
-          -armTemplate "./$SOURCE_ADF/ARMTemplateForFactory.json" `
+          -armTemplate "./$env:SOURCE_ADF/ARMTemplateForFactory.json" `
           -ResourceGroupName "${{ vars.AZURE_RESOURCE_GROUP }}" `
           -DataFactoryName "${{ vars.AZURE_DATA_FACTORY }}" `
           -predeployment $false `
@@ -82,8 +85,8 @@ jobs:
       name: PRD
       url: https://portal.azure.com/
     
-    env:
-      SOURCE_ADF: ${{ vars.AZURE_DATA_FACTORY_DEV }}
+    # env:
+    #  SOURCE_ADF: ${{ vars.AZURE_DATA_FACTORY_DEV }}
       
     steps:
       - name: Using ARM Template from source ADF instance
@@ -112,7 +115,7 @@ jobs:
       - name: Run Pre-deployment script
         run: |
           ./PrePostDeploymentScript.Ver2.ps1 `
-          -armTemplate "./$SOURCE_ADF/ARMTemplateForFactory.json" `
+          -armTemplate "./$env:SOURCE_ADF/ARMTemplateForFactory.json" `
           -ResourceGroupName "${{ vars.AZURE_RESOURCE_GROUP }}" `
           -DataFactoryName "${{ vars.AZURE_DATA_FACTORY }}" `
           -predeployment $true `
@@ -124,14 +127,14 @@ jobs:
         with:
           resourceGroupName: ${{ vars.AZURE_RESOURCE_GROUP }}
           dataFactoryName: ${{ vars.AZURE_DATA_FACTORY }}
-          armTemplateFile: ./$SOURCE_ADF/ARMTemplateForFactory.json
+          armTemplateFile: ./$env:SOURCE_ADF/ARMTemplateForFactory.json
           armTemplateParametersFile: ./ARMTemplateParameters_PRD.json
           mode: incremental
       
       - name: Run Post-deployment script
         run: |
           ./PrePostDeploymentScript.Ver2.ps1 `
-          -armTemplate "./$SOURCE_ADF/ARMTemplateForFactory.json" `
+          -armTemplate "./$env:SOURCE_ADF/ARMTemplateForFactory.json" `
           -ResourceGroupName "${{ vars.AZURE_RESOURCE_GROUP }}" `
           -DataFactoryName "${{ vars.AZURE_DATA_FACTORY }}" `
           -predeployment $false `
