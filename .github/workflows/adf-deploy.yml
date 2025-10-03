@@ -69,7 +69,6 @@ jobs:
         shell: pwsh
 
       - name: Run Pre-deployment script
-        uses: azure/powershell@v1.4.0
         run: |
           ${{github.workspace}}/PrePostDeploymentScript.ps1 `
             -armTemplate "ExportedArmTemplate/ARMTemplateForFactory.json" `
@@ -86,6 +85,7 @@ jobs:
           dataFactoryName: ${{ secrets.AZURE_DATA_FACTORY }}
           armTemplateFile: ExportedArmTemplate/ARMTemplateForFactory.json
           armTemplateParametersFile: ExportedArmTemplate/ARMTemplateParameters_QA.json
+          mode: incremental
 
       - name: Run Post-deployment script
         run: |
@@ -144,6 +144,7 @@ jobs:
           dataFactoryName: ${{ secrets.AZURE_DATA_FACTORY }}
           armTemplateFile: ExportedArmTemplate/ARMTemplateForFactory.json
           armTemplateParametersFile: ExportedArmTemplate/ARMTemplateParameters_Prod.json
+          mode: incremental
       
       - name: Run Post-deployment script
         run: |
