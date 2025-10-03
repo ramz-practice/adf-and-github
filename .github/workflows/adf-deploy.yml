@@ -45,10 +45,10 @@ jobs:
       name: QA
       url: https://portal.azure.com/
     steps:
-      - name: Wait for QA Approval
-        uses: hmarr/auto-approve-action@v2
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+      # - name: Wait for QA Approval
+      #  uses: hmarr/auto-approve-action@v2
+      #  with:
+      #    github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Download Artifact
         uses: actions/download-artifact@v4
@@ -58,10 +58,11 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v1
         with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}          
+          # client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          # client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
+          # subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          # tenant-id: ${{ secrets.AZURE_TENANT_ID }}          
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
           enable-AzPSSession: true
 
       - name: Install Az PowerShell module
@@ -104,10 +105,10 @@ jobs:
       name: PRD
       url: https://portal.azure.com/
     steps:
-      - name: Wait for Prod Approval
-        uses: hmarr/auto-approve-action@v2
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+      # - name: Wait for Prod Approval
+      #  uses: hmarr/auto-approve-action@v2
+      #  with:
+      #    github-token: ${{ secrets.GITHUB_TOKEN }}
         
       - name: Download Artifact
         uses: actions/download-artifact@v4
@@ -117,10 +118,11 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v1
         with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          # client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          # client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
+          # subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          # tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
           enable-AzPSSession: true
 
       - name: Install Az PowerShell module
