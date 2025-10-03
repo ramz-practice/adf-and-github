@@ -75,12 +75,18 @@ jobs:
 
       - name: Run Post-deployment script
         run: |
-          ./PrePostDeploymentScript.Ver2.ps1 `
-          -armTemplate "./$env:SOURCE_ADF/ARMTemplateForFactory.json" `
-          -ResourceGroupName "${{ vars.AZURE_RESOURCE_GROUP }}" `
-          -DataFactoryName "${{ vars.AZURE_DATA_FACTORY }}" `
-          -predeployment $false `
-          -deleteDeployment $true
+          if ($null -ne $deploymentsToConsider -and $deploymentsToConsider.Count -gt 0) {
+            $deploymentName = $deploymentsToConsider[0].DeploymentName
+            # proceed with deletion
+            ./PrePostDeploymentScript.Ver2.ps1 `
+              -armTemplate "./$env:SOURCE_ADF/ARMTemplateForFactory.json" `
+              -ResourceGroupName "${{ vars.AZURE_RESOURCE_GROUP }}" `
+              -DataFactoryName "${{ vars.AZURE_DATA_FACTORY }}" `
+              -predeployment $false `
+              -deleteDeployment $true
+          } else {
+            Write-Warning "No deployments found to delete in resource group $ResourceGroupName"
+          }
         shell: pwsh
 
   deploy-prod:
@@ -142,10 +148,16 @@ jobs:
       
       - name: Run Post-deployment script
         run: |
-          ./PrePostDeploymentScript.Ver2.ps1 `
-          -armTemplate "./$env:SOURCE_ADF/ARMTemplateForFactory.json" `
-          -ResourceGroupName "${{ vars.AZURE_RESOURCE_GROUP }}" `
-          -DataFactoryName "${{ vars.AZURE_DATA_FACTORY }}" `
-          -predeployment $false `
-          -deleteDeployment $true
+          if ($null -ne $deploymentsToConsider -and $deploymentsToConsider.Count -gt 0) {
+            $deploymentName = $deploymentsToConsider[0].DeploymentName
+            # proceed with deletion
+            ./PrePostDeploymentScript.Ver2.ps1 `
+              -armTemplate "./$env:SOURCE_ADF/ARMTemplateForFactory.json" `
+              -ResourceGroupName "${{ vars.AZURE_RESOURCE_GROUP }}" `
+              -DataFactoryName "${{ vars.AZURE_DATA_FACTORY }}" `
+              -predeployment $false `
+              -deleteDeployment $true
+          } else {
+            Write-Warning "No deployments found to delete in resource group $ResourceGroupName"
+          }
         shell: pwsh
