@@ -63,7 +63,7 @@ jobs:
         with:
           resourceGroupName: ${{ vars.AZURE_RESOURCE_GROUP }}
           dataFactoryName: ${{ vars.AZURE_DATA_FACTORY }}
-          armTemplateFile: ./$env:SOURCE_ADF/ARMTemplateForFactory.json
+          armTemplateFile: ./${{ env.SOURCE_ADF }}/ARMTemplateForFactory.json
           armTemplateParametersFile: ./ARMTemplateParameters_QA.json
           mode: incremental
 
@@ -127,7 +127,7 @@ jobs:
         with:
           resourceGroupName: ${{ vars.AZURE_RESOURCE_GROUP }}
           dataFactoryName: ${{ vars.AZURE_DATA_FACTORY }}
-          armTemplateFile: ./$env:SOURCE_ADF/ARMTemplateForFactory.json
+          armTemplateFile: ./${{ env.SOURCE_ADF }}/ARMTemplateForFactory.json
           armTemplateParametersFile: ./ARMTemplateParameters_PRD.json
           mode: incremental
       
