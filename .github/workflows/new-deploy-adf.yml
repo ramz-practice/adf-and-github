@@ -43,7 +43,7 @@ jobs:
           enable-AzPSSession: true
 
       - name: Deploy to QA
-        uses: Azure/data-factory-deploy-action@v2.1.0
+        uses: Azure/data-factory-deploy-action@v1.2.0
         with:
           resourceGroupName: ${{ vars.AZURE_RESOURCE_GROUP }}
           dataFactoryName: ${{ vars.AZURE_DATA_FACTORY }}
@@ -83,7 +83,7 @@ jobs:
           enable-AzPSSession: true
         
       - name: Deploy to Prod
-        uses: Azure/data-factory-deploy-action@v2.1.0
+        uses: Azure/data-factory-deploy-action@v1.2.0
         with:
           resourceGroupName: ${{ vars.AZURE_RESOURCE_GROUP }}
           dataFactoryName: ${{ vars.AZURE_DATA_FACTORY }}
