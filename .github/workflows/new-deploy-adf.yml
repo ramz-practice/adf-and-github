@@ -36,18 +36,18 @@ jobs:
       #  with:
       #    github-token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Verify PrePostDeploymentScript.Ver2.ps1 script exists
+        run: ls -l PrePostDeploymentScript.Ver2.ps1
+        
       - name: Login to Azure
         uses: azure/login@v1
         with:       
           creds: ${{ secrets.AZURE_CREDENTIALS }}
           enable-AzPSSession: true
           
-      - name: Verify PrePostDeploymentScript.Ver2.ps1 script exists
-        run: ls -l PrePostDeploymentScript.Ver2.ps1
-
       - name: Run Pre-deployment script
         run: |
-          ./PrePostDeploymentScript.Ver2.ps1 `
+          .PrePostDeploymentScript.Ver2.ps1 `
           -armTemplate "./${{ env.SOURCE_ADF }}/ARMTemplateForFactory.json" `
           -ResourceGroupName "${{ secrets.AZURE_RESOURCE_GROUP }}" `
           -DataFactoryName "${{ secrets.AZURE_DATA_FACTORY }}" `
@@ -66,7 +66,7 @@ jobs:
 
       - name: Run Post-deployment script
         run: |
-          ./PrePostDeploymentScript.Ver2.ps1 `
+          .PrePostDeploymentScript.Ver2.ps1 `
           -armTemplate "./${{ env.SOURCE_ADF }}/ARMTemplateForFactory.json" `
           -ResourceGroupName "${{ secrets.AZURE_RESOURCE_GROUP }}" `
           -DataFactoryName "${{ secrets.AZURE_DATA_FACTORY }}" `
@@ -103,7 +103,7 @@ jobs:
 
       - name: Run Pre-deployment script
         run: |
-          ./PrePostDeploymentScript.Ver2.ps1 `
+          .PrePostDeploymentScript.Ver2.ps1 `
           -armTemplate "./${{ env.SOURCE_ADF }}/ARMTemplateForFactory.json" `
           -ResourceGroupName "${{ secrets.AZURE_RESOURCE_GROUP }}" `
           -DataFactoryName "${{ secrets.AZURE_DATA_FACTORY }}" `
@@ -122,7 +122,7 @@ jobs:
       
       - name: Run Post-deployment script
         run: |
-          ./PrePostDeploymentScript.Ver2.ps1 `
+          .PrePostDeploymentScript.Ver2.ps1 `
           -armTemplate "./${{ env.SOURCE_ADF }}/ARMTemplateForFactory.json" `
           -ResourceGroupName "${{ secrets.AZURE_RESOURCE_GROUP }}" `
           -DataFactoryName "${{ secrets.AZURE_DATA_FACTORY }}" `
