@@ -30,8 +30,8 @@ jobs:
       #  with:
       #    github-token: ${{ secrets.GITHUB_TOKEN }}
         
-      - name: List all files recursively
-        run: find . -type f
+      # - name: List all files recursively
+      #   run: find . -type f
 
       - name: Install Az PowerShell module
         run: Install-Module -Name Az.DataFactory -Scope CurrentUser -Repository PSGallery -Force
@@ -46,9 +46,9 @@ jobs:
       - name: Run Pre-deployment script
         run: |
           ./PrePostDeploymentScript.Ver2.ps1 `
-          -armTemplate "./${{ env.SOURCE_ADF }}/ARMTemplateForFactory.json" `
-          -ResourceGroupName "${{ secrets.AZURE_RESOURCE_GROUP }}" `
-          -DataFactoryName "${{ secrets.AZURE_DATA_FACTORY }}" `
+          -armTemplate "./$SOURCE_ADF/ARMTemplateForFactory.json" `
+          -ResourceGroupName "${{ vars.AZURE_RESOURCE_GROUP }}" `
+          -DataFactoryName "${{ vars.AZURE_DATA_FACTORY }}" `
           -predeployment $true `
           -deleteDeployment $false
         shell: pwsh
@@ -56,18 +56,18 @@ jobs:
       - name: Deploy to QA
         uses: Azure/data-factory-deploy-action@v1.2.0
         with:
-          resourceGroupName: ${{ secrets.AZURE_RESOURCE_GROUP }}
-          dataFactoryName: ${{ secrets.AZURE_DATA_FACTORY }}
+          resourceGroupName: ${{ vars.AZURE_RESOURCE_GROUP }}
+          dataFactoryName: ${{ vars.AZURE_DATA_FACTORY }}
           armTemplateFile: ./$SOURCE_ADF/ARMTemplateForFactory.json
-          armTemplateParametersFile: ./$SOURCE_ADF/ARMTemplateParameters_QA.json
+          armTemplateParametersFile: ./ARMTemplateParameters_QA.json
           mode: incremental
 
       - name: Run Post-deployment script
         run: |
           ./PrePostDeploymentScript.Ver2.ps1 `
-          -armTemplate "./${{ env.SOURCE_ADF }}/ARMTemplateForFactory.json" `
-          -ResourceGroupName "${{ secrets.AZURE_RESOURCE_GROUP }}" `
-          -DataFactoryName "${{ secrets.AZURE_DATA_FACTORY }}" `
+          -armTemplate "./$SOURCE_ADF/ARMTemplateForFactory.json" `
+          -ResourceGroupName "${{ vars.AZURE_RESOURCE_GROUP }}" `
+          -DataFactoryName "${{ vars.AZURE_DATA_FACTORY }}" `
           -predeployment $false `
           -deleteDeployment $true
         shell: pwsh
@@ -80,7 +80,7 @@ jobs:
       url: https://portal.azure.com/
     steps:
       - name: Using ARM Template from source ADF instance
-        run: echo "Source ADF instance is ${{ env.SOURCE_ADF }}"
+        run: echo "Source ADF instance is $SOURCE_ADF"
         
       - name: Checkout adf_publish branch
         uses: actions/checkout@v3
@@ -105,9 +105,9 @@ jobs:
       - name: Run Pre-deployment script
         run: |
           ./PrePostDeploymentScript.Ver2.ps1 `
-          -armTemplate "./${{ env.SOURCE_ADF }}/ARMTemplateForFactory.json" `
-          -ResourceGroupName "${{ secrets.AZURE_RESOURCE_GROUP }}" `
-          -DataFactoryName "${{ secrets.AZURE_DATA_FACTORY }}" `
+          -armTemplate "./$SOURCE_ADF/ARMTemplateForFactory.json" `
+          -ResourceGroupName "${{ vars.AZURE_RESOURCE_GROUP }}" `
+          -DataFactoryName "${{ vars.AZURE_DATA_FACTORY }}" `
           -predeployment $true `
           -deleteDeployment $false
         shell: pwsh
@@ -115,18 +115,18 @@ jobs:
       - name: Deploy to Prod
         uses: Azure/data-factory-deploy-action@v1.2.0
         with:
-          resourceGroupName: ${{ secrets.AZURE_RESOURCE_GROUP }}
-          dataFactoryName: ${{ secrets.AZURE_DATA_FACTORY }}
+          resourceGroupName: ${{ vars.AZURE_RESOURCE_GROUP }}
+          dataFactoryName: ${{ vars.AZURE_DATA_FACTORY }}
           armTemplateFile: ./$SOURCE_ADF/ARMTemplateForFactory.json
-          armTemplateParametersFile: ./$SOURCE_ADF/ARMTemplateParameters_PRD.json
+          armTemplateParametersFile: ./ARMTemplateParameters_PRD.json
           mode: incremental
       
       - name: Run Post-deployment script
         run: |
           ./PrePostDeploymentScript.Ver2.ps1 `
-          -armTemplate "./${{ env.SOURCE_ADF }}/ARMTemplateForFactory.json" `
-          -ResourceGroupName "${{ secrets.AZURE_RESOURCE_GROUP }}" `
-          -DataFactoryName "${{ secrets.AZURE_DATA_FACTORY }}" `
+          -armTemplate "./$SOURCE_ADF/ARMTemplateForFactory.json" `
+          -ResourceGroupName "${{ vars.AZURE_RESOURCE_GROUP }}" `
+          -DataFactoryName "${{ vars.AZURE_DATA_FACTORY }}" `
           -predeployment $false `
           -deleteDeployment $true
         shell: pwsh
