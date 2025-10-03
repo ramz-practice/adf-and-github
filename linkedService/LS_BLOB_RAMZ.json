@@ -1,0 +1,11 @@
+{
+	"name": "LS_BLOB_RAMZ",
+	"properties": {
+		"annotations": [],
+		"type": "AzureBlobStorage",
+		"typeProperties": {
+			"serviceEndpoint": "https://stramzdev1.blob.core.windows.net/",
+			"accountKind": "StorageV2"
+		}
+	}
+}
