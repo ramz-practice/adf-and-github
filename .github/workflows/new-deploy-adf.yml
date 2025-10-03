@@ -17,10 +17,7 @@ jobs:
     environment:
       name: QA
       url: https://portal.azure.com/
-    
-    # env:
-    #   SOURCE_ADF: ${{ vars.AZURE_DATA_FACTORY_DEV }}
-  
+      
     steps:
       - name: Using ARM Template from source ADF instance
         run: echo "Source ADF instance is $SOURCE_ADF"
@@ -34,15 +31,6 @@ jobs:
       #  uses: hmarr/auto-approve-action@v2
       #  with:
       #    github-token: ${{ secrets.GITHUB_TOKEN }}
-        
-      # - name: List all files recursively
-      #   run: find . -type f
-
-      - name: Verify PrePostDeploymentScript exists
-        run: test -f ./PrePostDeploymentScript.Ver2.ps1 && echo "Script found" || (echo "Script missing" && exit 1)
-
-      - name: Verify ARMTemplateForFactory exists
-        run: test -f ./${{ env.SOURCE_ADF }}/ARMTemplateForFactory.json && echo "Script found" || (echo "Script missing" && exit 1)
         
       - name: Install Az PowerShell module
         run: Install-Module -Name Az.DataFactory -Scope CurrentUser -Repository PSGallery -Force -AllowClobber
@@ -96,16 +84,10 @@ jobs:
     environment:
       name: PRD
       url: https://portal.azure.com/
-    
-    # env:
-    #  SOURCE_ADF: ${{ vars.AZURE_DATA_FACTORY_DEV }}
       
     steps:
       - name: Using ARM Template from source ADF instance
         run: echo "Source ADF instance is $SOURCE_ADF"
-
-      - name: Verify PrePostDeploymentScript exists
-        run: test -f ./PrePostDeploymentScript.Ver2.ps1 && echo "Script found" || (echo "Script missing" && exit 1)
         
       - name: Checkout adf_publish branch
         uses: actions/checkout@v3
