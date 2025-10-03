@@ -711,23 +711,20 @@ try {
             $deploymentsToConsider = $deployments | Where-Object { $_.DeploymentName -like "ArmTemplate_master*" -or $_.DeploymentName -like "ArmTemplateForFactory*" } | Sort-Object -Property Timestamp -Descending
 
             if ($null -ne $deploymentsToConsider -and $deploymentsToConsider.Count -gt 0) {
-              $deploymentName = $deploymentsToConsider[0].DeploymentName
-              # proceed with deletion
-              $deploymentName = $deploymentsToConsider[0].DeploymentName
+                $deploymentName = $deploymentsToConsider[0].DeploymentName
+                Write-Host "Deployment to be deleted: $deploymentName"
+                $deploymentOperations = Get-AzResourceGroupDeploymentOperation -DeploymentName $deploymentName -ResourceGroupName $ResourceGroupName
+                $deploymentsToDelete = $deploymentOperations | Where-Object { $_.properties.targetResource.id -like "*Microsoft.Resources/deployments*" }
+    
+                $deploymentsToDelete | ForEach-Object {
+                    Write-Host "Deleting inner deployment: $($_.properties.targetResource.id)"
+                    Remove-AzResourceGroupDeployment -Id $_.properties.targetResource.id
+                }
+                Write-Host "Deleting deployment: $deploymentName"
+                Remove-AzResourceGroupDeployment -ResourceGroupName $ResourceGroupName -Name $deploymentName
             } else {
               Write-Warning "No deployments found to delete in resource group $ResourceGroupName"
             }
-
-            Write-Host "Deployment to be deleted: $deploymentName"
-            $deploymentOperations = Get-AzResourceGroupDeploymentOperation -DeploymentName $deploymentName -ResourceGroupName $ResourceGroupName
-            $deploymentsToDelete = $deploymentOperations | Where-Object { $_.properties.targetResource.id -like "*Microsoft.Resources/deployments*" }
-
-            $deploymentsToDelete | ForEach-Object {
-                Write-Host "Deleting inner deployment: $($_.properties.targetResource.id)"
-                Remove-AzResourceGroupDeployment -Id $_.properties.targetResource.id
-            }
-            Write-Host "Deleting deployment: $deploymentName"
-            Remove-AzResourceGroupDeployment -ResourceGroupName $ResourceGroupName -Name $deploymentName
         }
 
         #Start active triggers - after cleanup efforts
