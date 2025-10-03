@@ -41,47 +41,14 @@ jobs:
         with:       
           creds: ${{ secrets.AZURE_CREDENTIALS }}
           enable-AzPSSession: true
-          
-      - name: Run Pre-deployment script
-        run: |
-          try {
-            ./PrePostDeploymentScript.Ver2.ps1 `
-              -armTemplate "./$env:SOURCE_ADF/ARMTemplateForFactory.json" `
-              -ArmTemplateParameters "./ARMTemplateParameters_QA.json" `
-              -ResourceGroupName "${{ vars.AZURE_RESOURCE_GROUP }}" `
-              -DataFactoryName "${{ vars.AZURE_DATA_FACTORY }}" `
-              -predeployment $true `
-              -deleteDeployment $false
-          } catch {
-            Write-Error "Pre-deployment script failed: $_"
-            exit 1
-          }
-        shell: pwsh
 
       - name: Deploy to QA
-        uses: Azure/data-factory-deploy-action@v1.2.0
+        uses: Azure/data-factory-deploy-action@v2.1.0
         with:
           resourceGroupName: ${{ vars.AZURE_RESOURCE_GROUP }}
           dataFactoryName: ${{ vars.AZURE_DATA_FACTORY }}
           armTemplateFile: ./${{ env.SOURCE_ADF }}/ARMTemplateForFactory.json
           armTemplateParametersFile: ./ARMTemplateParameters_QA.json
-          # mode: incremental
-
-      - name: Run Post-deployment script
-        run: |
-          try {
-              ./PrePostDeploymentScript.Ver2.ps1 `
-                -armTemplate "./$env:SOURCE_ADF/ARMTemplateForFactory.json" `
-                -ArmTemplateParameters "./ARMTemplateParameters_QA.json" `
-                -ResourceGroupName "${{ vars.AZURE_RESOURCE_GROUP }}" `
-                -DataFactoryName "${{ vars.AZURE_DATA_FACTORY }}" `
-                -predeployment $false `
-                -deleteDeployment $true
-          } catch {
-            Write-Error "Post-deployment script failed: $_"
-            exit 1
-          }
-        shell: pwsh
 
   deploy-prod:
     needs: deploy-qa
@@ -114,22 +81,6 @@ jobs:
         with:       
           creds: ${{ secrets.AZURE_CREDENTIALS }}
           enable-AzPSSession: true
-
-      - name: Run Pre-deployment script
-        run: |
-          try {
-            ./PrePostDeploymentScript.Ver2.ps1 `
-              -armTemplate "./$env:SOURCE_ADF/ARMTemplateForFactory.json" `
-              -ArmTemplateParameters "./ARMTemplateParameters_PRD.json" `
-              -ResourceGroupName "${{ vars.AZURE_RESOURCE_GROUP }}" `
-              -DataFactoryName "${{ vars.AZURE_DATA_FACTORY }}" `
-              -predeployment $true `
-              -deleteDeployment $false
-          } catch {
-            Write-Error "Pre-deployment script failed: $_"
-            exit 1
-          }
-        shell: pwsh
         
       - name: Deploy to Prod
         uses: Azure/data-factory-deploy-action@v1.2.0
@@ -140,18 +91,3 @@ jobs:
           armTemplateParametersFile: ./ARMTemplateParameters_PRD.json
           # mode: incremental
       
-      - name: Run Post-deployment script
-        run: |
-          try {
-            ./PrePostDeploymentScript.Ver2.ps1 `
-              -armTemplate "./$env:SOURCE_ADF/ARMTemplateForFactory.json" `
-              -ArmTemplateParameters "./ARMTemplateParameters_PRD.json" `
-              -ResourceGroupName "${{ vars.AZURE_RESOURCE_GROUP }}" `
-              -DataFactoryName "${{ vars.AZURE_DATA_FACTORY }}" `
-              -predeployment $false `
-              -deleteDeployment $true
-          } catch {
-            Write-Error "Post-deployment script failed: $_"
-            exit 1
-          }
-        shell: pwsh
