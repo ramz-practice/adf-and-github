@@ -1,0 +1,19 @@
+{
+	"name": "ramz1test1",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_BLOB_RAMZ",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Binary",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "ExportedArmTemplate.zip",
+				"folderPath": "input",
+				"container": "ramz1"
+			}
+		}
+	}
+}
