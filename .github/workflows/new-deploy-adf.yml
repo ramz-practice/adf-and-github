@@ -41,11 +41,14 @@ jobs:
         with:       
           creds: ${{ secrets.AZURE_CREDENTIALS }}
           enable-AzPSSession: true
+          
+      - name: Verify PrePostDeploymentScript.Ver2.ps1 script exists
+        run: ls -l ./PrePostDeploymentScript.Ver2.ps1
 
       - name: Run Pre-deployment script
         run: |
-          ${{github.workspace}}/PrePostDeploymentScript.Ver2.ps1 `
-          -armTemplate "./$SOURCE_ADF/ARMTemplateForFactory.json" `
+          ./PrePostDeploymentScript.Ver2.ps1 `
+          -armTemplate "./${{ env.SOURCE_ADF }}/ARMTemplateForFactory.json" `
           -ResourceGroupName "${{ secrets.AZURE_RESOURCE_GROUP }}" `
           -DataFactoryName "${{ secrets.AZURE_DATA_FACTORY }}" `
           -predeployment $true `
@@ -63,8 +66,8 @@ jobs:
 
       - name: Run Post-deployment script
         run: |
-          ${{github.workspace}}/PrePostDeploymentScript.Ver2.ps1 `
-          -armTemplate "./$SOURCE_ADF/ARMTemplateForFactory.json" `
+          ./PrePostDeploymentScript.Ver2.ps1 `
+          -armTemplate "./${{ env.SOURCE_ADF }}/ARMTemplateForFactory.json" `
           -ResourceGroupName "${{ secrets.AZURE_RESOURCE_GROUP }}" `
           -DataFactoryName "${{ secrets.AZURE_DATA_FACTORY }}" `
           -predeployment $false `
@@ -100,8 +103,8 @@ jobs:
 
       - name: Run Pre-deployment script
         run: |
-          ${{github.workspace}}/PrePostDeploymentScript.Ver2.ps1 `
-          -armTemplate "./$SOURCE_ADF/ARMTemplateForFactory.json" `
+          ./PrePostDeploymentScript.Ver2.ps1 `
+          -armTemplate "./${{ env.SOURCE_ADF }}/ARMTemplateForFactory.json" `
           -ResourceGroupName "${{ secrets.AZURE_RESOURCE_GROUP }}" `
           -DataFactoryName "${{ secrets.AZURE_DATA_FACTORY }}" `
           -predeployment $true `
@@ -119,8 +122,8 @@ jobs:
       
       - name: Run Post-deployment script
         run: |
-          ${{github.workspace}}/PrePostDeploymentScript.Ver2.ps1 `
-          -armTemplate "./$SOURCE_ADF/ARMTemplateForFactory.json" `
+          ./PrePostDeploymentScript.Ver2.ps1 `
+          -armTemplate "./${{ env.SOURCE_ADF }}/ARMTemplateForFactory.json" `
           -ResourceGroupName "${{ secrets.AZURE_RESOURCE_GROUP }}" `
           -DataFactoryName "${{ secrets.AZURE_DATA_FACTORY }}" `
           -predeployment $false `
