@@ -7,41 +7,33 @@ permissions:
   id-token: write
   contents: read
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
+env:
+  SOURCE_ADF: ${{ secrets.AZURE_DATA_FACTORY }}
 
-    steps:
-      - name: Checkout adf_publish branch
-        uses: actions/checkout@v3
-        with:
-          ref: adf_publish
-
-      - name: Install Az PowerShell module
-        run: Install-Module -Name Az.DataFactory -Scope CurrentUser -Repository PSGallery -Force
-        shell: pwsh
-
-      - name: Get source ADF name
-        run: echo "SOURCE_ADF=${{ secrets.AZURE_DATA_FACTORY }}" >> $GITHUB_ENV
-        
+jobs:       
   deploy-qa:
-    needs: build
     runs-on: ubuntu-latest
     environment:
       name: QA
       url: https://portal.azure.com/
     steps:
+      - name: Checkout adf_publish branch
+        uses: actions/checkout@v3
+        with:
+          ref: adf_publish
+    
       # - name: Wait for QA Approval
       #  uses: hmarr/auto-approve-action@v2
       #  with:
       #    github-token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Verify PrePostDeploymentScript.Ver2.ps1 script exists
-        run: ls -l
         
       - name: List all files recursively
         run: find . -type f
-        
+
+      - name: Install Az PowerShell module
+        run: Install-Module -Name Az.DataFactory -Scope CurrentUser -Repository PSGallery -Force
+        shell: pwsh
+      
       - name: Login to Azure
         uses: azure/login@v1
         with:       
@@ -50,7 +42,7 @@ jobs:
           
       - name: Run Pre-deployment script
         run: |
-          .PrePostDeploymentScript.Ver2.ps1 `
+          ./PrePostDeploymentScript.Ver2.ps1 `
           -armTemplate "./${{ env.SOURCE_ADF }}/ARMTemplateForFactory.json" `
           -ResourceGroupName "${{ secrets.AZURE_RESOURCE_GROUP }}" `
           -DataFactoryName "${{ secrets.AZURE_DATA_FACTORY }}" `
@@ -69,7 +61,7 @@ jobs:
 
       - name: Run Post-deployment script
         run: |
-          .PrePostDeploymentScript.Ver2.ps1 `
+          ./PrePostDeploymentScript.Ver2.ps1 `
           -armTemplate "./${{ env.SOURCE_ADF }}/ARMTemplateForFactory.json" `
           -ResourceGroupName "${{ secrets.AZURE_RESOURCE_GROUP }}" `
           -DataFactoryName "${{ secrets.AZURE_DATA_FACTORY }}" `
@@ -84,29 +76,29 @@ jobs:
       name: PRD
       url: https://portal.azure.com/
     steps:
+      - name: Checkout adf_publish branch
+        uses: actions/checkout@v3
+        with:
+          ref: adf_publish
+          
       # - name: Wait for Prod Approval
       #  uses: hmarr/auto-approve-action@v2
       #  with:
       #    github-token: ${{ secrets.GITHUB_TOKEN }}
         
-      - name: Download Artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: ExportedArmTemplate
-
+      - name: Install Az PowerShell module
+        run: Install-Module -Name Az.DataFactory -Scope CurrentUser -Repository PSGallery -Force
+        shell: pwsh
+        
       - name: Login to Azure
         uses: azure/login@v1
         with:       
           creds: ${{ secrets.AZURE_CREDENTIALS }}
           enable-AzPSSession: true
 
-      - name: Install Az PowerShell module
-        run: Install-Module -Name Az.DataFactory -Scope CurrentUser -Repository PSGallery -Force
-        shell: pwsh
-
       - name: Run Pre-deployment script
         run: |
-          .PrePostDeploymentScript.Ver2.ps1 `
+          ./PrePostDeploymentScript.Ver2.ps1 `
           -armTemplate "./${{ env.SOURCE_ADF }}/ARMTemplateForFactory.json" `
           -ResourceGroupName "${{ secrets.AZURE_RESOURCE_GROUP }}" `
           -DataFactoryName "${{ secrets.AZURE_DATA_FACTORY }}" `
@@ -125,7 +117,7 @@ jobs:
       
       - name: Run Post-deployment script
         run: |
-          .PrePostDeploymentScript.Ver2.ps1 `
+          ./PrePostDeploymentScript.Ver2.ps1 `
           -armTemplate "./${{ env.SOURCE_ADF }}/ARMTemplateForFactory.json" `
           -ResourceGroupName "${{ secrets.AZURE_RESOURCE_GROUP }}" `
           -DataFactoryName "${{ secrets.AZURE_DATA_FACTORY }}" `
