@@ -709,7 +709,14 @@ try {
             Write-Host "Deleting ARM deployment ... under resource group: $ResourceGroupName"
             $deployments = Get-AzResourceGroupDeployment -ResourceGroupName $ResourceGroupName
             $deploymentsToConsider = $deployments | Where-Object { $_.DeploymentName -like "ArmTemplate_master*" -or $_.DeploymentName -like "ArmTemplateForFactory*" } | Sort-Object -Property Timestamp -Descending
-            $deploymentName = $deploymentsToConsider[0].DeploymentName
+
+            if ($null -ne $deploymentsToConsider -and $deploymentsToConsider.Count -gt 0) {
+              $deploymentName = $deploymentsToConsider[0].DeploymentName
+              # proceed with deletion
+              $deploymentName = $deploymentsToConsider[0].DeploymentName
+            } else {
+              Write-Warning "No deployments found to delete in resource group $ResourceGroupName"
+            }
 
             Write-Host "Deployment to be deleted: $deploymentName"
             $deploymentOperations = Get-AzResourceGroupDeploymentOperation -DeploymentName $deploymentName -ResourceGroupName $ResourceGroupName
