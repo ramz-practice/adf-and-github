@@ -37,7 +37,7 @@ jobs:
       #    github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Verify PrePostDeploymentScript.Ver2.ps1 script exists
-        run: ls -l PrePostDeploymentScript.Ver2.ps1
+        run: ls -l *.* # PrePostDeploymentScript.Ver2.ps1
         
       - name: Login to Azure
         uses: azure/login@v1
