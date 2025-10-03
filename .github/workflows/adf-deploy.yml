@@ -25,11 +25,11 @@ jobs:
         working-directory: ${{github.workspace}}/build
 
       - name: Validate ADF Resources
-        run: npm run build validate ${{github.workspace}} /subscriptions/${{ secrets.AZURE_SUBSCRIPTION_ID_DEV }}/resourceGroups/${{ secrets.AZURE_RESOURCE_GROUP_DEV }}/providers/Microsoft.DataFactory/factories/${{ secrets.AZURE_DATA_FACTORY_DEV }}
+        run: npm run build validate ${{github.workspace}} /subscriptions/${{ secrets.AZURE_SUBSCRIPTION_ID }}/resourceGroups/${{ secrets.AZURE_RESOURCE_GROUP }}/providers/Microsoft.DataFactory/factories/${{ secrets.AZURE_DATA_FACTORY }}
         working-directory: ${{github.workspace}}/build
 
       - name: Export ARM Template
-        run: npm run build export ${{github.workspace}} /subscriptions/${{ secrets.AZURE_SUBSCRIPTION_ID_DEV }}/resourceGroups/${{ secrets.AZURE_RESOURCE_GROUP_DEV }}/providers/Microsoft.DataFactory/factories/${{ secrets.AZURE_DATA_FACTORY_DEV }} ExportedArmTemplate
+        run: npm run build export ${{github.workspace}} /subscriptions/${{ secrets.AZURE_SUBSCRIPTION_ID }}/resourceGroups/${{ secrets.AZURE_RESOURCE_GROUP }}/providers/Microsoft.DataFactory/factories/${{ secrets.AZURE_DATA_FACTORY }} ExportedArmTemplate
         working-directory: ${{github.workspace}}/build
 
       - name: Upload Artifact
@@ -58,9 +58,9 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v1
         with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID_QA }}
-          client-secret: ${{ secrets.AZURE_CLIENT_SECRET_QA }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID_QA }}
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}          
           enable-AzPSSession: true
 
@@ -73,8 +73,8 @@ jobs:
         run: |
           ${{github.workspace}}/PrePostDeploymentScript.ps1 `
             -armTemplate "ExportedArmTemplate/ARMTemplateForFactory.json" `
-            -ResourceGroupName "${{ secrets.AZURE_RESOURCE_GROUP_QA }}" `
-            -DataFactoryName "${{ secrets.AZURE_DATA_FACTORY_QA }}" `
+            -ResourceGroupName "${{ secrets.AZURE_RESOURCE_GROUP }}" `
+            -DataFactoryName "${{ secrets.AZURE_DATA_FACTORY }}" `
             -predeployment $true `
             -deleteDeployment $false
         shell: pwsh
@@ -82,8 +82,8 @@ jobs:
       - name: Deploy to QA
         uses: Azure/data-factory-deploy-action@v1.2.0
         with:
-          resourceGroupName: ${{ secrets.AZURE_RESOURCE_GROUP_QA }}
-          dataFactoryName: ${{ secrets.AZURE_DATA_FACTORY_QA }}
+          resourceGroupName: ${{ secrets.AZURE_RESOURCE_GROUP }}
+          dataFactoryName: ${{ secrets.AZURE_DATA_FACTORY }}
           armTemplateFile: ExportedArmTemplate/ARMTemplateForFactory.json
           armTemplateParametersFile: ExportedArmTemplate/ARMTemplateParameters_QA.json
 
@@ -91,8 +91,8 @@ jobs:
         run: |
           ${{github.workspace}}/PrePostDeploymentScript.ps1 `
             -armTemplate "ExportedArmTemplate/ARMTemplateForFactory.json" `
-            -ResourceGroupName "${{ secrets.AZURE_RESOURCE_GROUP_QA }}" `
-            -DataFactoryName "${{ secrets.AZURE_DATA_FACTORY_QA }}" `
+            -ResourceGroupName "${{ secrets.AZURE_RESOURCE_GROUP }}" `
+            -DataFactoryName "${{ secrets.AZURE_DATA_FACTORY }}" `
             -predeployment $false `
             -deleteDeployment $true
         shell: pwsh
@@ -101,7 +101,7 @@ jobs:
     needs: deploy-qa
     runs-on: ubuntu-latest
     environment:
-      name: Prod
+      name: PRD
       url: https://portal.azure.com/
     steps:
       - name: Wait for Prod Approval
@@ -117,9 +117,9 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v1
         with:
-          client-id: ${{ secrets.AZURE_CLIENT_PRD }}
-          client-secret: ${{ secrets.AZURE_CLIENT_SECRET_PRD }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID_PRD }}
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           enable-AzPSSession: true
 
@@ -131,8 +131,8 @@ jobs:
         run: |
           ${{github.workspace}}/PrePostDeploymentScript.ps1 `
             -armTemplate "ExportedArmTemplate/ARMTemplateForFactory.json" `
-            -ResourceGroupName "${{ secrets.AZURE_RESOURCE_GROUP_PRD }}" `
-            -DataFactoryName "${{ secrets.AZURE_DATA_FACTORY_PRD }}" `
+            -ResourceGroupName "${{ secrets.AZURE_RESOURCE_GROUP }}" `
+            -DataFactoryName "${{ secrets.AZURE_DATA_FACTORY }}" `
             -predeployment $true `
             -deleteDeployment $false
         shell: pwsh
@@ -140,8 +140,8 @@ jobs:
       - name: Deploy to Prod
         uses: Azure/data-factory-deploy-action@v1.2.0
         with:
-          resourceGroupName: ${{ secrets.AZURE_RESOURCE_GROUP_PRD }}
-          dataFactoryName: ${{ secrets.AZURE_DATA_FACTORY_PRD }}
+          resourceGroupName: ${{ secrets.AZURE_RESOURCE_GROUP }}
+          dataFactoryName: ${{ secrets.AZURE_DATA_FACTORY }}
           armTemplateFile: ExportedArmTemplate/ARMTemplateForFactory.json
           armTemplateParametersFile: ExportedArmTemplate/ARMTemplateParameters_Prod.json
       
@@ -149,8 +149,8 @@ jobs:
         run: |
           ${{ github.action_path }}/PrePostDeploymentScript.ps1 `
             -armTemplate "ExportedArmTemplate/ARMTemplateForFactory.json" `
-            -ResourceGroupName "${{ secrets.AZURE_RESOURCE_GROUP_PRD }}" `
-            -DataFactoryName "${{ secrets.AZURE_DATA_FACTORY_PRD }}" `
+            -ResourceGroupName "${{ secrets.AZURE_RESOURCE_GROUP }}" `
+            -DataFactoryName "${{ secrets.AZURE_DATA_FACTORY }}" `
             -predeployment $false `
             -deleteDeployment $true
         shell: pwsh
