@@ -143,7 +143,7 @@ jobs:
           resourceGroupName: ${{ secrets.AZURE_RESOURCE_GROUP }}
           dataFactoryName: ${{ secrets.AZURE_DATA_FACTORY }}
           armTemplateFile: ExportedArmTemplate/ARMTemplateForFactory.json
-          armTemplateParametersFile: ExportedArmTemplate/ARMTemplateParameters_Prod.json
+          armTemplateParametersFile: ExportedArmTemplate/ARMTemplateParameters_PRD.json
           mode: incremental
       
       - name: Run Post-deployment script
