@@ -8,7 +8,7 @@ permissions:
   contents: read
 
 env:
-  SOURCE_ADF: ${{ secrets.AZURE_DATA_FACTORY }}
+  SOURCE_ADF: ${{ vars.AZURE_DATA_FACTORY }}
 
 jobs:       
   deploy-qa:
@@ -17,6 +17,9 @@ jobs:
       name: QA
       url: https://portal.azure.com/
     steps:
+      - name: Using ARM Template from source ADF instance
+        run: echo "Source ADF instance is ${{ env.SOURCE_ADF }}"
+  
       - name: Checkout adf_publish branch
         uses: actions/checkout@v3
         with:
@@ -76,6 +79,9 @@ jobs:
       name: PRD
       url: https://portal.azure.com/
     steps:
+      - name: Using ARM Template from source ADF instance
+        run: echo "Source ADF instance is ${{ env.SOURCE_ADF }}"
+        
       - name: Checkout adf_publish branch
         uses: actions/checkout@v3
         with:
