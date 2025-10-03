@@ -68,11 +68,11 @@ jobs:
       - name: Run Pre-deployment script
         run: |
           ${{github.workspace}}/PrePostDeploymentScript.Ver2.ps1 `
-            -armTemplate "ExportedArmTemplate/ARMTemplateForFactory.json" `
-            -ResourceGroupName "${{ secrets.AZURE_RESOURCE_GROUP }}" `
-            -DataFactoryName "${{ secrets.AZURE_DATA_FACTORY }}" `
-            -predeployment $true `
-            -deleteDeployment $false
+          -armTemplate "ExportedArmTemplate/ARMTemplateForFactory.json" `
+          -ResourceGroupName "${{ secrets.AZURE_RESOURCE_GROUP }}" `
+          -DataFactoryName "${{ secrets.AZURE_DATA_FACTORY }}" `
+          -predeployment $true `
+          -deleteDeployment $false
         shell: pwsh
 
       - name: Deploy to QA
@@ -87,11 +87,11 @@ jobs:
       - name: Run Post-deployment script
         run: |
           ${{github.workspace}}/PrePostDeploymentScript.Ver2.ps1 `
-            -armTemplate "ExportedArmTemplate/ARMTemplateForFactory.json" `
-            -ResourceGroupName "${{ secrets.AZURE_RESOURCE_GROUP }}" `
-            -DataFactoryName "${{ secrets.AZURE_DATA_FACTORY }}" `
-            -predeployment $false `
-            -deleteDeployment $true
+          -armTemplate "ExportedArmTemplate/ARMTemplateForFactory.json" `
+          -ResourceGroupName "${{ secrets.AZURE_RESOURCE_GROUP }}" `
+          -DataFactoryName "${{ secrets.AZURE_DATA_FACTORY }}" `
+          -predeployment $false `
+          -deleteDeployment $true
         shell: pwsh
 
   deploy-prod:
@@ -124,11 +124,11 @@ jobs:
       - name: Run Pre-deployment script
         run: |
           ${{github.workspace}}/PrePostDeploymentScript.Ver2.ps1 `
-            -armTemplate "ExportedArmTemplate/ARMTemplateForFactory.json" `
-            -ResourceGroupName "${{ secrets.AZURE_RESOURCE_GROUP }}" `
-            -DataFactoryName "${{ secrets.AZURE_DATA_FACTORY }}" `
-            -predeployment $true `
-            -deleteDeployment $false
+          -armTemplate "ExportedArmTemplate/ARMTemplateForFactory.json" `
+          -ResourceGroupName "${{ secrets.AZURE_RESOURCE_GROUP }}" `
+          -DataFactoryName "${{ secrets.AZURE_DATA_FACTORY }}" `
+          -predeployment $true `
+          -deleteDeployment $false
         shell: pwsh
         
       - name: Deploy to Prod
@@ -142,10 +142,10 @@ jobs:
       
       - name: Run Post-deployment script
         run: |
-          ${{ github.action_path }}/PrePostDeploymentScript.Ver2.ps1 `
-            -armTemplate "ExportedArmTemplate/ARMTemplateForFactory.json" `
-            -ResourceGroupName "${{ secrets.AZURE_RESOURCE_GROUP }}" `
-            -DataFactoryName "${{ secrets.AZURE_DATA_FACTORY }}" `
-            -predeployment $false `
-            -deleteDeployment $true
+          ${{github.workspace}}/PrePostDeploymentScript.Ver2.ps1 `
+          -armTemplate "ExportedArmTemplate/ARMTemplateForFactory.json" `
+          -ResourceGroupName "${{ secrets.AZURE_RESOURCE_GROUP }}" `
+          -DataFactoryName "${{ secrets.AZURE_DATA_FACTORY }}" `
+          -predeployment $false `
+          -deleteDeployment $true
         shell: pwsh
