@@ -43,7 +43,7 @@ jobs:
           enable-AzPSSession: true
           
       - name: Verify PrePostDeploymentScript.Ver2.ps1 script exists
-        run: ls -l ./PrePostDeploymentScript.Ver2.ps1
+        run: ls -l PrePostDeploymentScript.Ver2.ps1
 
       - name: Run Pre-deployment script
         run: |
