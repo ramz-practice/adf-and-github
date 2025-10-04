@@ -16,7 +16,7 @@ jobs:
     
     environment:
       name: QA
-      url: https://portal.azure.com/
+      # url: https://portal.azure.com/
       
     steps:  
       - name: Checkout adf_publish branch
@@ -48,12 +48,9 @@ jobs:
     
     environment:
       name: PRD
-      url: https://portal.azure.com/
+      # url: https://portal.azure.com/
       
-    steps:
-      - name: Using ARM Template from source ADF instance
-        run: echo "Source ADF instance is $SOURCE_ADF_FOLDER"
-        
+    steps:        
       - name: Checkout adf_publish branch
         uses: actions/checkout@v3
         with:
