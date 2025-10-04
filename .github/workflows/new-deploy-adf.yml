@@ -26,11 +26,6 @@ jobs:
         uses: actions/checkout@v3
         with:
           ref: adf_publish
-    
-      # - name: Wait for QA Approval
-      #  uses: hmarr/auto-approve-action@v2
-      #  with:
-      #    github-token: ${{ secrets.GITHUB_TOKEN }}
         
       - name: Install Az PowerShell module
         run: Install-Module -Name Az.DataFactory -Scope CurrentUser -Repository PSGallery -Force -AllowClobber
@@ -48,7 +43,8 @@ jobs:
           resourceGroupName: ${{ vars.AZURE_RESOURCE_GROUP }}
           dataFactoryName: ${{ vars.AZURE_DATA_FACTORY }}
           armTemplateFile: ./${{ env.SOURCE_ADF }}/ARMTemplateForFactory.json
-          armTemplateParametersFile: ./ARMTemplateParameters_QA.json
+          # armTemplateParametersFile: ./ARMTemplateParameters_QA.json
+          armTemplateParametersFile: ./ARMTemplateParameters_${{ environment.name }}.json
 
   deploy-prod:
     needs: deploy-qa
@@ -66,11 +62,6 @@ jobs:
         uses: actions/checkout@v3
         with:
           ref: adf_publish
-          
-      # - name: Wait for Prod Approval
-      #  uses: hmarr/auto-approve-action@v2
-      #  with:
-      #    github-token: ${{ secrets.GITHUB_TOKEN }}
         
       - name: Install Az PowerShell module
         run: Install-Module -Name Az.DataFactory -Scope CurrentUser -Repository PSGallery -Force -AllowClobber
@@ -88,6 +79,6 @@ jobs:
           resourceGroupName: ${{ vars.AZURE_RESOURCE_GROUP }}
           dataFactoryName: ${{ vars.AZURE_DATA_FACTORY }}
           armTemplateFile: ./${{ env.SOURCE_ADF }}/ARMTemplateForFactory.json
-          armTemplateParametersFile: ./ARMTemplateParameters_PRD.json
-          # mode: incremental
+          # armTemplateParametersFile: ./ARMTemplateParameters_PRD.json
+          armTemplateParametersFile: ./ARMTemplateParameters_${{ environment.name }}.json
       
