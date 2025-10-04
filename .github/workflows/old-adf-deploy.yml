@@ -1,4 +1,4 @@
-name: Deploy ADF Resources
+name: OLD Deploy ADF Resources
 
 on:
   workflow_dispatch:
