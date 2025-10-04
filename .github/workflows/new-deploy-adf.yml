@@ -43,8 +43,7 @@ jobs:
           resourceGroupName: ${{ vars.AZURE_RESOURCE_GROUP }}
           dataFactoryName: ${{ vars.AZURE_DATA_FACTORY }}
           armTemplateFile: ./${{ env.SOURCE_ADF }}/ARMTemplateForFactory.json
-          # armTemplateParametersFile: ./ARMTemplateParameters_QA.json
-          armTemplateParametersFile: ./ARMTemplateParameters_${{ environment.name }}.json
+          armTemplateParametersFile: ./ARMTemplateParameters_QA.json
 
   deploy-prod:
     needs: deploy-qa
@@ -79,6 +78,5 @@ jobs:
           resourceGroupName: ${{ vars.AZURE_RESOURCE_GROUP }}
           dataFactoryName: ${{ vars.AZURE_DATA_FACTORY }}
           armTemplateFile: ./${{ env.SOURCE_ADF }}/ARMTemplateForFactory.json
-          # armTemplateParametersFile: ./ARMTemplateParameters_PRD.json
-          armTemplateParametersFile: ./ARMTemplateParameters_${{ environment.name }}.json
+          armTemplateParametersFile: ./ARMTemplateParameters_PRD.json
       
