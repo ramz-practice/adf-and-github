@@ -11,10 +11,6 @@
 			"type": "string",
 			"defaultValue": "https://stramzdev1.blob.core.windows.net/"
 		},
-		"LS_KV_RAMZ_properties_typeProperties_baseUrl": {
-			"type": "string",
-			"defaultValue": "https://kv-ramz-dev.vault.azure.net/"
-		},
 		"containerUri": {
 			"type": "string",
 			"metadata": "URI to storage account containing linked ARM templates"
@@ -44,9 +40,6 @@
 					},
 					"LS_BLOB_RAMZ_properties_typeProperties_serviceEndpoint": {
 						"value": "[parameters('LS_BLOB_RAMZ_properties_typeProperties_serviceEndpoint')]"
-					},
-					"LS_KV_RAMZ_properties_typeProperties_baseUrl": {
-						"value": "[parameters('LS_KV_RAMZ_properties_typeProperties_baseUrl')]"
 					}
 				}
 			},
